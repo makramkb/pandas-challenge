@@ -78,7 +78,7 @@ df
 
 #-------------------------------------------------------------------------------------------
 # create a DataFrame with school_name and perc_passed_M_and_R columns and get the top 5/ bottom 5
-
+df_1=df.reset_index()
 top_schools=df_1[['school_name','perc_passed_M_and_R']].sort_values('perc_passed_M_and_R',ascending=False).head()
 top_schools
 
