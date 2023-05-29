@@ -31,6 +31,8 @@ print('Total percentage who passed Reading in all schools is : ',perc_passed_Rea
 perc_passed_Math_and_Reading_all_schools = (perc_passed_Math_all_schools+perc_passed_Reading_all_schools)/2
 print('Total percentage who passed Reading and Math in all schools is : ',perc_passed_Math_and_Reading_all_schools,'%' )
 
+
+print('-----------------------------------------------------------------------------')
 #--------------------------------------------------------------------------------
 
 # count total students and get the budget sum for each school 
@@ -76,6 +78,7 @@ df['perc_passed_M_and_R']=(df['perc_passed_Math']+df['perc_passed_reading'])/2
 
 print (df)
 
+print('-----------------------------------------------------------------------------')
 #-------------------------------------------------------------------------------------------
 # create a DataFrame with school_name and perc_passed_M_and_R columns and get the top 5/ bottom 5
 df_1=df.reset_index()
@@ -85,6 +88,7 @@ print (top_schools)
 bottom_schools=df_1[['school_name','perc_passed_M_and_R']].sort_values('perc_passed_M_and_R',ascending=False).tail()
 print(bottom_schools)
 
+print('-----------------------------------------------------------------------------')
 #-------------------------------------------------------------------------------------------------------
 #create spending range column
 
@@ -94,6 +98,8 @@ df['Avg spending range']=pd.cut(df['per student budget'],
                               spending_bins,labels=labels,
                                include_lowest=True)
 print(df)
+
+print('-----------------------------------------------------------------------------')
 #------------------------------------------------------------------------------------------------------------------
 # spending summary table grouping by Avg spending range
 
@@ -105,6 +111,7 @@ spending_summary['Avg spending passing Reading'] = df.groupby(["Avg spending ran
 spending_summary['Avg passing M and R'] = df.groupby(["Avg spending range"])["perc_passed_M_and_R"].mean()
 print(spending_summary)
 
+print('-----------------------------------------------------------------------------')
 #------------------------------------------------------------------------------------------------------
 # group schools by size
 
