@@ -74,16 +74,16 @@ df['perc_passed_M_and_R']=(df['perc_passed_Math']+df['perc_passed_reading'])/2
 
 # df is the final result
 
-df
+print (df)
 
 #-------------------------------------------------------------------------------------------
 # create a DataFrame with school_name and perc_passed_M_and_R columns and get the top 5/ bottom 5
 df_1=df.reset_index()
 top_schools=df_1[['school_name','perc_passed_M_and_R']].sort_values('perc_passed_M_and_R',ascending=False).head()
-top_schools
+print (top_schools)
 
 bottom_schools=df_1[['school_name','perc_passed_M_and_R']].sort_values('perc_passed_M_and_R',ascending=False).tail()
-bottom_schools
+print(bottom_schools)
 
 #-------------------------------------------------------------------------------------------------------
 #create spending range column
@@ -93,7 +93,7 @@ labels = ["<$585", "$585-630", "$630-645", "$645-680"]
 df['Avg spending range']=pd.cut(df['per student budget'],
                               spending_bins,labels=labels,
                                include_lowest=True)
-df
+print(df)
 #------------------------------------------------------------------------------------------------------------------
 # spending summary table grouping by Avg spending range
 
@@ -103,7 +103,7 @@ spending_summary['Avg Reading score'] = df.groupby(["Avg spending range"])["Avg_
 spending_summary['Avg perc passing Math'] = df.groupby(["Avg spending range"])["perc_passed_Math"].mean()
 spending_summary['Avg spending passing Reading'] = df.groupby(["Avg spending range"])["perc_passed_reading"].mean()
 spending_summary['Avg passing M and R'] = df.groupby(["Avg spending range"])["perc_passed_M_and_R"].mean()
-spending_summary
+print(spending_summary)
 
 #------------------------------------------------------------------------------------------------------
 # group schools by size
@@ -114,4 +114,4 @@ size_summary=pd.DataFrame()
 size_summary['per school summary']=pd.cut(df['Total student'],
                                    size_bins,labels=labels,
                                    include_lowest=True)
-size_summary
+print(size_summary)
