@@ -1,4 +1,4 @@
-# Each eection should be run in a different cell
+# Each section should be run in a different cell
 
 
 import csv
