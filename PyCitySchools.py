@@ -1,124 +1,143 @@
+# Each eection should be run in a different cell
+
+
+import csv
 import pandas as pd
 
+schools = pd.read_csv('schools_complete.csv')
+students = pd.read_csv('students_complete.csv')
+nb_of_schools = len (schools['school_name'].unique())
+nb_total_students = len (students['student_name'])
+total_budget = schools['budget'].sum()
+avg_Math_score = students['math_score'].mean()
+avg_Reading_score = students['reading_score'].mean()
+students['passed_Math'] = students['math_score']>=60
+nb_students_passed_Math = len (students[students['passed_Math']])
+perc_students_passed_Math = round ((nb_students_passed_Math/nb_total_students)*100,2)
+students['passed_Reading'] = students['reading_score']>=60
+nb_students_passed_Reading = len (students[students['passed_Reading']])
+perc_students_passed_Reading = round ((nb_students_passed_Reading/nb_total_students)*100,2)
+perc_passed_M_R = (perc_students_passed_Math+perc_students_passed_Reading)/2
 
-schools=pd.read_csv('schools_complete.csv')
-students=pd.read_csv('students_complete.csv')
+print('Total nb of all schools : ', nb_of_schools)
+print('Total nb of students : ',nb_total_students)
+print('Avg Math score :',avg_Math_score)
+print('Avg Reading score :',avg_Reading_score)
+print('Perc passing Math : ',perc_students_passed_Math)
+print('Perc passing Reading : ',perc_students_passed_Reading)
+print('Perc passing R and M : ',perc_passed_M_R)
 
-Total_nb_schools = len ( schools['school_name'].unique() )
-print('Total nb of schools is : ',Total_nb_schools)
-
-Total_nb_students = len (students['student_name'])
-print('Total nb of students in all schools is : ',Total_nb_students)
-
-Total_budget_for_all_schools = schools['budget'].sum()
-print('The total budget of all schools is : ',Total_budget_for_all_schools )
-
-Avg_Math_score = round (students['math_score'].mean() , 2)
-print('The avg Math score for all schools is : ', Avg_Math_score)
-
-Avg_Reading_score = round (students['reading_score'].mean() , 2)
-print('The avg Reading score for all schools is : ', Avg_Reading_score)
-
-Math_students_passed=len (students[students['math_score']>=60])
-perc_passed_Math_all_schools = round ((Math_students_passed / Total_nb_students)*100,2)
-print('Total percentage who passed Math in all schools is : ',perc_passed_Math_all_schools,'%' )
-
-
-Reading_students_passed=len (students[students['reading_score']>=60])
-perc_passed_Reading_all_schools = round ((Reading_students_passed / Total_nb_students)*100,2)
-print('Total percentage who passed Reading in all schools is : ',perc_passed_Reading_all_schools,'%' )
-
-perc_passed_Math_and_Reading_all_schools = (perc_passed_Math_all_schools+perc_passed_Reading_all_schools)/2
-print('Total percentage who passed Reading and Math in all schools is : ',perc_passed_Math_and_Reading_all_schools,'%' )
+#-------------------------------------------------------------------------------------------------------------------
+# School Summary
 
 
-print('-----------------------------------------------------------------------------')
-#--------------------------------------------------------------------------------
-
-# count total students and get the budget sum for each school 
-
-total_students = students.groupby('school_name')['student_name'].count()
-total_budget= schools.groupby('school_name')['budget'].sum()
-
-# merge the result to get a DataFrame with the result
-df=pd.merge(total_students,total_budget,on='school_name')
-
-#rename the columns to reflect the purpose of each column
-df=df.rename(columns={'student_name':'Total student',
-                     'budget':'per school budget'})
-
-#calculate the budget/student and add the column to df
-df['per student budget']=df['per school budget']/df['Total student']
-df['Avg_Math_score_per_school'] = round(students.groupby('school_name')['math_score'].mean(),2)
-
-#calculate the avg reading score/school and add the column to df
-df['Avg_Reading_score_per_school']=round (students.groupby('school_name')['reading_score'].mean(),2)
+ss=pd.merge(schools,students,on='school_name')
+ss_1=ss.groupby(['type','school_name'])['Student ID'].count()
 
 
-#calculate the nb of students who got 60 plus in Math per school, get the percentage and add the column to df
-
-nb_passed_Math = students[students['math_score']>=60]
-df['nb_passed_Math']=nb_passed_Math.groupby('school_name')['math_score'].count()
-df['perc_passed_Math'] = round((df['nb_passed_Math']/df['Total student'])*100,2)
+ss_2=ss.groupby(['type','school_name'])['budget'].max()
+ss_3=pd.merge(ss_1,ss_2,on=(['type','school_name']))
 
 
-#calculate the nb of students who got 60 plus in Reading per school, get the percentage and add the column to df
+ss_4=ss_3.rename(columns={'Student ID':'Total nb of students',
+                                 'budget':'Total budget / school'})
+
+ss_4['Budget / student'] = ss_4['Total budget / school']/ss_4['Total nb of students']
+ss_4['Avg Math score / school']=round ( ss.groupby(['type','school_name'])['math_score'].mean(),2 )
+ss_4['Avg Reading score / school']=round (ss.groupby(['type','school_name'])['reading_score'].mean(),2 )
 
 
-nb_passed_reading = students[students['reading_score']>=60]
-df['nb_passed_reading']=nb_passed_reading.groupby('school_name')['reading_score'].count()
-df['perc_passed_reading'] = round((df['nb_passed_reading']/df['Total student'])*100,2)
+ss['passed_Math']=ss['math_score']>=60
+ss_5=ss[ss['passed_Math']]
+ss_4['Students passed Math / school']=ss_5.groupby(['type','school_name'])['passed_Math'].count()
+ss_4['Perc students passed Math / school'] \
+= round((ss_4['Students passed Math / school']/ss_4['Total nb of students'])*100,2)
 
-#calculate the perc for students passed M and R per school and add the column to df 
+
+ss['passed_Reading']=ss['reading_score']>=60
+ss_6=ss[ss['passed_Reading']]
+ss_4['Students passed Reading / school']=ss_6.groupby(['type','school_name'])['passed_Reading'].count()
+ss_4['Perc students passed Reading / school'] \
+= round((ss_4['Students passed Reading / school']/ss_4['Total nb of students'])*100,2)
 
 
-df['perc_passed_M_and_R']=(df['perc_passed_Math']+df['perc_passed_reading'])/2
+ss_4['Perc students passed M and R / school'] = \
+(ss_4['Perc students passed Math / school'] + ss_4['Perc students passed Reading / school'])/2
 
-# df is the final result
+# Final DF 
 
-print (df)
+ss_4
 
-print('-----------------------------------------------------------------------------')
-#-------------------------------------------------------------------------------------------
-# create a DataFrame with school_name and perc_passed_M_and_R columns and get the top 5/ bottom 5
-df_1=df.reset_index()
-top_schools=df_1[['school_name','perc_passed_M_and_R']].sort_values('perc_passed_M_and_R',ascending=False).head()
-print (top_schools)
+#----------------------------------------------------------------------------------------------------------------
+# Get the highest performing schools
 
-bottom_schools=df_1[['school_name','perc_passed_M_and_R']].sort_values('perc_passed_M_and_R',ascending=False).tail()
-print(bottom_schools)
+import csv
+import pandas as pd
 
-print('-----------------------------------------------------------------------------')
-#-------------------------------------------------------------------------------------------------------
-#create spending range column
+schools = pd.read_csv('schools_complete.csv')
+students = pd.read_csv('students_complete.csv')
+
+top_schools = ss_4['Perc students passed M and R / school'].sort_values(ascending=False).head()
+top_schools=pd.DataFrame(top_schools)
+top_schools
+
+#----------------------------------------------------------------------------------------------------------------------
+# Get the lowest performing schools
+
+
+bottom_schools = ss_4['Perc students passed M and R / school'].sort_values(ascending=True).head()
+bottom_schools=pd.DataFrame(top_schools)
+bottom_schools
+
+#--------------------------------------------------------------------------------------------------------------
+# Avg Math score per school/grade
+
+ss_7=ss.groupby(['school_name','grade'])['math_score'].mean()
+ss_7=pd.DataFrame(ss_7)
+ss_7
+
+#------------------------------------------------------------------------------------------------------------------
+
+# Avg Reading score per school/grade
+
+ss_8=ss.groupby(['school_name','grade'])['reading_score'].mean()
+ss_8=pd.DataFrame(ss_7)
+ss_8
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Score school pending
 
 spending_bins = [0, 585, 630, 645, 680]
 labels = ["<$585", "$585-630", "$630-645", "$645-680"]
-df['Avg spending range']=pd.cut(df['per student budget'],
-                              spending_bins,labels=labels,
-                               include_lowest=True)
-print(df)
 
-print('-----------------------------------------------------------------------------')
-#------------------------------------------------------------------------------------------------------------------
-# spending summary table grouping by Avg spending range
+ss_4['Avg spending per student'] = pd.cut(ss_4['Budget / student'],
+                                spending_bins,labels=labels,
+                                 include_lowest=True)
+ss_4
 
-spending_summary=pd.DataFrame()
-spending_summary['Avg Math score'] = df.groupby(["Avg spending range"])["Avg_Math_score_per_school"].mean()
-spending_summary['Avg Reading score'] = df.groupby(["Avg spending range"])["Avg_Reading_score_per_school"].mean()
-spending_summary['Avg perc passing Math'] = df.groupby(["Avg spending range"])["perc_passed_Math"].mean()
-spending_summary['Avg spending passing Reading'] = df.groupby(["Avg spending range"])["perc_passed_reading"].mean()
-spending_summary['Avg passing M and R'] = df.groupby(["Avg spending range"])["perc_passed_M_and_R"].mean()
-print(spending_summary)
+#---------------------------------------------------------------------------------------------------------------------------------
+# Spending summary DataFrame
 
-print('-----------------------------------------------------------------------------')
-#------------------------------------------------------------------------------------------------------
-# group schools by size
+spending_summary = pd.DataFrame()
+#spending_math_scores = school_spending_df.groupby(["Spending Ranges (Per Student)"])["Average Math Score"].mean()
+spending_summary['Spending Math scores']=ss_4.groupby('Avg spending per student')['Avg Math score / school'].mean()
+#spending_reading_scores = school_spending_df.groupby(["Spending Ranges (Per Student)"])["Average Reading Score"].mean()
+spending_summary['Spending Reading scores']=ss_4.groupby('Avg spending per student')['Avg Reading score / school'].mean()
+#spending_passing_math = school_spending_df.groupby(["Spending Ranges (Per Student)"])["% Passing Math"].mean()
+spending_summary['Spending passing Math']=ss_4.groupby('Avg spending per student')['Perc students passed Math / school'].mean()
+#spending_passing_reading = school_spending_df.groupby(["Spending Ranges (Per Student)"])["% Passing Reading"].mean()
+spending_summary['Spending passing Reading']=ss_4.groupby('Avg spending per student')['Perc students passed Reading / school'].mean()
+#overall_passing_spending = school_spending_df.groupby(["Spending Ranges (Per Student)"])["% Overall Passing"].mean()
+spending_summary['Spending passing R and M']=ss_4.groupby('Avg spending per student')['Perc students passed M and R / school'].mean()
+#spending_summary['Spending Math score'] = ss_4
 
+spending_summary
+#---------------------------------------------------------------------------------------------------------------------------------------------
+# size summary using cut method
 size_bins = [0, 1000, 2000, 5000]
 labels = ["Small (<1000)", "Medium (1000-2000)", "Large (2000-5000)"]
-size_summary=pd.DataFrame()
-size_summary['per school summary']=pd.cut(df['Total student'],
-                                   size_bins,labels=labels,
-                                   include_lowest=True)
-print(size_summary)
+size_summary  = pd.DataFrame()
+size_summary ['School size based on performance'] = pd.cut(ss_4['Total nb of students'],
+                                                          bins=size_bins,labels=labels,
+                                                          include_lowest=True)
+size_summary
