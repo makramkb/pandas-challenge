@@ -1,1 +1,4 @@
+Data Analysis
 
+The data shows the more the spending / student the less the average in Math and Reading 
+and this is clear when running the top/bottom DataFrame the highest spending are the District schools where we can find the bottom 5 are Disctrict and the top 5 are Chatter
