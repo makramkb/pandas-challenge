@@ -27,7 +27,7 @@ print('Perc passing Math : ',perc_students_passed_Math)
 print('Perc passing Reading : ',perc_students_passed_Reading)
 print('Perc passing R and M : ',perc_passed_M_R)
 
-#-------------------------------------------------------------------------------------------------------------------
+print('----------------------------------------------------------------------------------------------------------------')
 # School Summary
 
 
@@ -64,41 +64,51 @@ ss_4['Perc students passed Reading / school'] \
 ss_4['Perc students passed M and R / school'] = \
 (ss_4['Perc students passed Math / school'] + ss_4['Perc students passed Reading / school'])/2
 
-# Final DF 
 
-ss_4
+print('School summary table :')
+display(ss_4)
 
-#----------------------------------------------------------------------------------------------------------------
+print('----------------------------------------------------------------------------------------------------------------')
 # Get the highest performing schools
 
 top_schools = ss_4['Perc students passed M and R / school'].sort_values(ascending=False).head()
 top_schools=pd.DataFrame(top_schools)
-top_schools
 
-#----------------------------------------------------------------------------------------------------------------------
+print('Top performing school table :')
+display(top_schools)
+
+print('----------------------------------------------------------------------------------------------------------------')
 # Get the lowest performing schools
 
 
 bottom_schools = ss_4['Perc students passed M and R / school'].sort_values(ascending=True).head()
 bottom_schools=pd.DataFrame(top_schools)
-bottom_schools
 
-#--------------------------------------------------------------------------------------------------------------
+print('Lowest performing school table :')
+display(bottom_schools)
+
+print('----------------------------------------------------------------------------------------------------------------')
 # Avg Math score per school/grade
 
 ss_7=ss.groupby(['school_name','grade'])['math_score'].mean()
 ss_7=pd.DataFrame(ss_7)
-ss_7
 
-#------------------------------------------------------------------------------------------------------------------
+
+print('Ave Math score per school/grade table :')
+display(ss_7)
+
+print('----------------------------------------------------------------------------------------------------------------')
 
 # Avg Reading score per school/grade
 
 ss_8=ss.groupby(['school_name','grade'])['reading_score'].mean()
 ss_8=pd.DataFrame(ss_7)
-ss_8
 
-#-----------------------------------------------------------------------------------------------------------------------
+
+print('Avg reading score per school/grade table :')
+display(ss_8)
+
+print('----------------------------------------------------------------------------------------------------------------')
 # Score school pending
 
 spending_bins = [0, 585, 630, 645, 680]
@@ -107,9 +117,12 @@ labels = ["<$585", "$585-630", "$630-645", "$645-680"]
 ss_4['Avg spending per student'] = pd.cut(ss_4['Budget / student'],
                                 spending_bins,labels=labels,
                                  include_lowest=True)
-ss_4
 
-#---------------------------------------------------------------------------------------------------------------------------------
+
+print('School spending per score table :')
+display(ss_4)
+
+print('----------------------------------------------------------------------------------------------------------------')
 # Spending summary DataFrame
 
 spending_summary = pd.DataFrame()
@@ -125,8 +138,10 @@ spending_summary['Spending passing Reading']=ss_4.groupby('Avg spending per stud
 spending_summary['Spending passing R and M']=ss_4.groupby('Avg spending per student')['Perc students passed M and R / school'].mean()
 #spending_summary['Spending Math score'] = ss_4
 
-spending_summary
-#---------------------------------------------------------------------------------------------------------------------------------------------
+
+print('Spending summary table :')
+display(spending_summary)
+print('----------------------------------------------------------------------------------------------------------------')
 # size summary using cut method
 size_bins = [0, 1000, 2000, 5000]
 labels = ["Small (<1000)", "Medium (1000-2000)", "Large (2000-5000)"]
@@ -134,4 +149,7 @@ size_summary  = pd.DataFrame()
 size_summary ['School size based on performance'] = pd.cut(ss_4['Total nb of students'],
                                                           bins=size_bins,labels=labels,
                                                           include_lowest=True)
-size_summary
+
+
+print('Size summary table :')
+display(size_summary)
