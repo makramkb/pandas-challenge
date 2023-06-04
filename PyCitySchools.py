@@ -71,12 +71,6 @@ ss_4
 #----------------------------------------------------------------------------------------------------------------
 # Get the highest performing schools
 
-import csv
-import pandas as pd
-
-schools = pd.read_csv('schools_complete.csv')
-students = pd.read_csv('students_complete.csv')
-
 top_schools = ss_4['Perc students passed M and R / school'].sort_values(ascending=False).head()
 top_schools=pd.DataFrame(top_schools)
 top_schools
