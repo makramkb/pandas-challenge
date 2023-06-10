@@ -82,7 +82,7 @@ print('-------------------------------------------------------------------------
 
 
 bottom_schools = ss_4['Perc students passed M and R / school'].sort_values(ascending=True).head()
-bottom_schools=pd.DataFrame(top_schools)
+bottom_schools=pd.DataFrame(bottom_schools)
 
 print('Lowest performing school table :')
 display(bottom_schools)
