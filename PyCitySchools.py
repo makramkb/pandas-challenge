@@ -1,6 +1,3 @@
-# Each section should be run in a different cell
-
-
 import csv
 import pandas as pd
 
